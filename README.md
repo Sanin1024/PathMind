@@ -2,28 +2,30 @@
 
 An ML-assisted graph path prediction system that combines **Machine Learning** with **Breadth-First Search (BFS)** to predict and evaluate shortest-path decisions in graphs.
 
-Built with **Python**, **scikit-learn**, **Pandas**, and **Joblib**, PathMind generates graph-based training data, performs feature engineering, trains a Random Forest classifier, and compares ML-predicted paths against BFS shortest paths.
+Built with **Python**, **scikit-learn**, **Pandas**, **Joblib**, and **Matplotlib**, PathMind generates graph-based training data, performs feature engineering, trains a Random Forest classifier, predicts graph paths, and compares machine-learning decisions against BFS shortest paths.
 
 ---
 
 # Features
 
-* 🧠 Machine-learning-assisted path prediction
-* 🌐 Graph-based pathfinding
-* 🔎 Breadth-First Search (BFS)
+* 🧠 Machine-learning-assisted graph path prediction
+* 🔎 Breadth-First Search (BFS) shortest-path reference
 * 🤖 Random Forest classification
+* 🌐 Graph generation and processing
 * 📊 Automated training dataset generation
 * ⚙️ Graph feature engineering
 * 🎯 Candidate-node classification
-* 🛣 Shortest-path prediction
-* 🔄 ML path vs BFS path comparison
-* 📈 Accuracy evaluation
-* 📋 Precision, recall, and F1-score evaluation
-* 📉 Confusion matrix generation
+* 🛣 ML-based path prediction
+* 🔄 ML vs BFS path comparison
+* 📈 Model accuracy evaluation
+* 📋 Precision, recall, and F1-score
+* 📉 Confusion matrix evaluation
 * 💾 Trained model persistence using Joblib
-* ⌨️ Interactive graph input through PowerShell
-* 🧪 Independent BFS testing
+* 📊 Graph and path visualization
+* ⌨️ Interactive graph input
+* 🧪 BFS testing
 * 🧪 Feature-engineering testing
+* 🧪 Model evaluation
 * 🧩 Modular Python architecture
 * 🌍 Cross-platform Python implementation
 
@@ -31,39 +33,47 @@ Built with **Python**, **scikit-learn**, **Pandas**, and **Joblib**, PathMind ge
 
 # How It Works
 
-PathMind uses BFS as the algorithmic reference and machine learning to learn which candidate nodes are likely to contribute to a shortest path.
+PathMind uses **BFS-generated shortest-path information as the reference** for supervised learning.
+
+The system extracts graph features for candidate nodes and trains a Random Forest classifier to identify promising path-selection candidates.
 
 ```text
-                    Graph
-                      │
-                      ▼
-              Feature Engineering
-                      │
-                      ▼
-                Training Data
-                      │
-                      ▼
-              Random Forest Model
-                      │
-                      ▼
-               Trained Model
-                      │
-                      ▼
-               User Graph Input
-                      │
-             ┌────────┴────────┐
-             ▼                 ▼
-            BFS             ML Model
-             │                 │
-             ▼                 ▼
-       Shortest Path     Predicted Path
-             │                 │
-             └────────┬────────┘
-                      ▼
-                  Comparison
-                      │
-                      ▼
-                  Final Result
+                         Graph
+                           │
+                           ▼
+                  Graph Generation
+                           │
+                           ▼
+                  BFS Ground Truth
+                           │
+                           ▼
+                 Feature Engineering
+                           │
+                           ▼
+                    Training Data
+                           │
+                           ▼
+                  Random Forest Model
+                           │
+                           ▼
+                    Trained Model
+                           │
+                           ▼
+                   User Graph Input
+                           │
+                  ┌────────┴────────┐
+                  ▼                 ▼
+                 BFS             ML Model
+                  │                 │
+                  ▼                 ▼
+            Shortest Path     Predicted Path
+                  │                 │
+                  └────────┬────────┘
+                           ▼
+                       Evaluation
+                           │
+                           ▼
+                  PathMind Results
 ```
 
 ---
@@ -72,7 +82,7 @@ PathMind uses BFS as the algorithmic reference and machine learning to learn whi
 
 * Python 3.10 or later
 * pip
-* PowerShell / Terminal
+* Windows PowerShell, macOS Terminal, or Linux shell
 
 Python dependencies:
 
@@ -94,27 +104,88 @@ cd PathMind
 
 Create a virtual environment:
 
-```powershell
+```bash
 python -m venv .venv
 ```
 
-Activate it on Windows:
+Activate the virtual environment on Windows:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-Install the dependencies:
+On macOS/Linux:
 
-```powershell
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
 ---
 
-# Generate the Training Dataset
+# Quick Start
 
-Generate graph-based training data:
+For the complete PathMind workflow:
+
+```powershell
+python train.py
+python predict.py
+python evaluate.py
+```
+
+The general workflow is:
+
+```text
+Train
+  ↓
+Generate / Load Dataset
+  ↓
+Train Random Forest
+  ↓
+Save Model
+  ↓
+Predict
+  ↓
+Enter Graph
+  ↓
+Generate ML Path
+  ↓
+Compare with BFS
+  ↓
+Evaluate
+```
+
+---
+
+# Training
+
+Train the machine-learning model using:
+
+```powershell
+python train.py
+```
+
+The training process uses graph-derived features and BFS-based path information to train a Random Forest classifier.
+
+The trained model is stored in:
+
+```text
+models/
+└── bfs_shortest_path_model.joblib
+```
+
+---
+
+# Generate Training Data
+
+PathMind includes a dataset-generation module for creating graph-based training examples.
+
+Run:
 
 ```powershell
 python -m src.dataset_generator
@@ -127,44 +198,56 @@ data/
 └── training_data.csv
 ```
 
-Check the generated dataset:
-
-```powershell
-Get-ChildItem .\data
-```
-
-View the first few rows:
-
-```powershell
-Get-Content .\data\training_data.csv -TotalCount 6
-```
+The dataset contains graph features and candidate labels used by the machine-learning model.
 
 ---
 
-# Train the Machine-Learning Model
+# Model
 
-Train the Random Forest model:
+PathMind currently uses a:
 
-```powershell
-python -m src.model
-```
+**Random Forest Classifier**
 
-The training process:
+The model learns from graph features describing relationships between:
 
-1. Loads the training dataset
-2. Separates features and labels
-3. Splits the dataset into training and testing sets
-4. Creates a Random Forest classifier
-5. Trains the model
-6. Evaluates model performance
-7. Saves the trained model
+* Source node
+* Destination node
+* Current node
+* Candidate node
+* Graph distances
+* Node degrees
+* Neighbor relationships
+* Visited-node status
+* Reachability
 
-The trained model is saved to:
+The model's output is used to assist with path-selection decisions.
 
-```text
-models/
-└── bfs_shortest_path_model.joblib
-```
+---
+
+# Features Used by the Model
+
+PathMind currently uses **16 engineered features**:
+
+|  # | Feature                                |
+| -: | -------------------------------------- |
+|  1 | `source`                               |
+|  2 | `destination`                          |
+|  3 | `current_node`                         |
+|  4 | `candidate_node`                       |
+|  5 | `source_candidate_distance`            |
+|  6 | `candidate_destination_distance`       |
+|  7 | `current_destination_distance`         |
+|  8 | `current_degree`                       |
+|  9 | `candidate_degree`                     |
+| 10 | `destination_degree`                   |
+| 11 | `candidate_is_destination`             |
+| 12 | `candidate_is_neighbor_of_destination` |
+| 13 | `candidate_is_visited`                 |
+| 14 | `candidate_is_source`                  |
+| 15 | `candidate_distance_from_current`      |
+| 16 | `destination_reachable_from_candidate` |
+
+These features provide the model with information about the current graph state and the relationship between candidate nodes and the target destination.
 
 ---
 
@@ -191,7 +274,7 @@ Training samples : 860
 Testing samples  : 215
 ```
 
-The current Random Forest model achieved:
+The current Random Forest training run achieved:
 
 ```text
 Accuracy: 0.9395
@@ -217,62 +300,26 @@ Confusion matrix:
  [  3  36]]
 ```
 
-> Classification accuracy represents candidate-node classification performance. It should not be interpreted as complete shortest-path accuracy. Path-level performance is evaluated separately by comparing ML-generated routes with BFS routes.
+> **Note:** The 93.95% accuracy represents candidate-node classification performance. It should not be interpreted as complete shortest-path accuracy. Path-level performance should be evaluated separately by comparing ML-generated paths against BFS shortest paths.
 
 ---
 
-# Feature Engineering
+# Prediction
 
-PathMind currently extracts **16 features** for each candidate node.
-
-|  # | Feature                                |
-| -: | -------------------------------------- |
-|  1 | `source`                               |
-|  2 | `destination`                          |
-|  3 | `current_node`                         |
-|  4 | `candidate_node`                       |
-|  5 | `source_candidate_distance`            |
-|  6 | `candidate_destination_distance`       |
-|  7 | `current_destination_distance`         |
-|  8 | `current_degree`                       |
-|  9 | `candidate_degree`                     |
-| 10 | `destination_degree`                   |
-| 11 | `candidate_is_destination`             |
-| 12 | `candidate_is_neighbor_of_destination` |
-| 13 | `candidate_is_visited`                 |
-| 14 | `candidate_is_source`                  |
-| 15 | `candidate_distance_from_current`      |
-| 16 | `destination_reachable_from_candidate` |
-
-These features describe the relationship between the source, destination, current node, candidate node, and graph structure.
-
----
-
-# Interactive Prediction
-
-After training the model, run:
+Use the interactive prediction interface:
 
 ```powershell
-python -m src.predictor
+python predict.py
 ```
 
-PathMind will request the graph information interactively.
+The user can provide the graph and specify the source and destination nodes.
 
 Example:
 
 ```text
-============================================================
-                 GRAPH INPUT
-============================================================
-
 Enter number of nodes: 8
 
-Nodes are numbered from 0 to 7.
-
-Enter the number of edges.
-Number of edges: 10
-
-Enter each edge as: node1 node2
+Enter number of edges: 10
 
 Edge 1/10: 0 1
 Edge 2/10: 0 3
@@ -289,7 +336,7 @@ Enter source node: 0
 Enter destination node: 7
 ```
 
-PathMind then calculates the BFS shortest path and the ML-predicted path.
+PathMind then evaluates the graph using both BFS and the trained ML model.
 
 Example:
 
@@ -306,9 +353,26 @@ Reached destination: True
 
 ---
 
-# BFS Testing
+# BFS
 
-The BFS implementation can be tested independently:
+PathMind contains a complete BFS implementation in:
+
+```text
+src/bfs.py
+```
+
+It provides:
+
+* BFS traversal
+* Shortest-path search
+* Distance calculation
+* Parent tracking
+* Path reconstruction
+* Path validation
+* Path formatting
+* BFS tree generation
+
+Test the BFS implementation directly:
 
 ```powershell
 python .\src\bfs.py
@@ -345,15 +409,65 @@ BFS test completed successfully.
 
 ---
 
-# Feature Engineering Testing
+# Evaluation
 
-Test the feature-engineering module:
+PathMind includes a dedicated evaluation script:
+
+```powershell
+python evaluate.py
+```
+
+The evaluation component can be used to assess model/path performance beyond simple classification accuracy.
+
+The key concept is comparing:
+
+```text
+ML Predicted Path
+        vs.
+BFS Shortest Path
+```
+
+Important path-level metrics include:
+
+* Exact path match
+* Destination reachability
+* Predicted path length
+* BFS path length
+* Optimal-path performance
+* Path-length difference
+
+---
+
+# Visualization
+
+PathMind includes graph visualization functionality in:
+
+```text
+src/visualize.py
+```
+
+The visualization component uses **Matplotlib** to support graphical inspection of graphs and paths.
+
+Visualization can be used to understand:
+
+* Graph structure
+* Source node
+* Destination node
+* Candidate paths
+* BFS path
+* ML-predicted path
+
+This provides a visual way to inspect how PathMind navigates a graph.
+
+---
+
+# Feature Engineering
+
+Test the feature-engineering module directly:
 
 ```powershell
 python .\src\feature_engineering.py
 ```
-
-The test displays the generated features, feature count, feature vector, and candidate label.
 
 Example:
 
@@ -368,20 +482,72 @@ Destination : 6
 Current     : 0
 Candidate   : 2
 
+Features:
+source: 0.0
+destination: 6.0
+current_node: 0.0
+candidate_node: 2.0
+source_candidate_distance: 1.0
+candidate_destination_distance: 2.0
+current_destination_distance: 3.0
+current_degree: 2.0
+candidate_degree: 2.0
+destination_degree: 1.0
+candidate_is_destination: 0.0
+candidate_is_neighbor_of_destination: 0.0
+candidate_is_visited: 0.0
+candidate_is_source: 0.0
+candidate_distance_from_current: 1.0
+destination_reachable_from_candidate: 1.0
+
 Feature count:
 16
 
 Candidate label:
 1
+```
 
-# Feature engineering test completed successfully.
+---
+
+# Python Module Interface
+
+The core modules can also be executed directly.
+
+Generate dataset:
+
+```powershell
+python -m src.dataset_generator
+```
+
+Train model:
+
+```powershell
+python -m src.model
+```
+
+Run prediction:
+
+```powershell
+python -m src.predictor
+```
+
+Test BFS:
+
+```powershell
+python .\src\bfs.py
+```
+
+Test feature engineering:
+
+```powershell
+python .\src\feature_engineering.py
 ```
 
 ---
 
 # Syntax Checking
 
-Check individual Python modules before running them:
+Python modules can be checked before execution using:
 
 ```powershell
 python -m py_compile .\src\bfs.py
@@ -391,30 +557,7 @@ python -m py_compile .\src\model.py
 python -m py_compile .\src\predictor.py
 ```
 
-No output generally indicates that the file passed Python's compilation check.
-
----
-
-# Complete Workflow
-
-For a complete training and prediction workflow:
-
-```powershell
-# Activate environment
-.\.venv\Scripts\Activate.ps1
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Generate training data
-python -m src.dataset_generator
-
-# Train the ML model
-python -m src.model
-
-# Run interactive prediction
-python -m src.predictor
-```
+No output generally indicates that the module passed Python's compilation check.
 
 ---
 
@@ -432,102 +575,162 @@ PathMind/
 ├── src/
 │   ├── __init__.py
 │   ├── bfs.py
-│   ├── graph_generator.py
-│   ├── feature_engineering.py
 │   ├── dataset_generator.py
+│   ├── feature_engineering.py
+│   ├── graph_generator.py
 │   ├── model.py
-│   └── predictor.py
+│   ├── predictor.py
+│   └── visualize.py
 │
-├── main.py
-├── requirements.txt
+├── .gitignore
 ├── README.md
 ├── LICENSE
-└── .gitignore
+├── main.py
+├── train.py
+├── predict.py
+├── evaluate.py
+└── requirements.txt
 ```
 
 ---
 
-# Module Description
+# Project Components
 
-| File                     | Description                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------ |
-| `main.py`                | Main project entry point                                                       |
-| `bfs.py`                 | BFS traversal, shortest-path search, distance calculation, and path validation |
-| `graph_generator.py`     | Graph generation utilities                                                     |
-| `feature_engineering.py` | Generates ML features from graph information                                   |
-| `dataset_generator.py`   | Creates the supervised-learning dataset                                        |
-| `model.py`               | Trains and evaluates the Random Forest classifier                              |
-| `predictor.py`           | Loads the trained model and predicts paths                                     |
-| `__init__.py`            | Initializes the Python package                                                 |
+| Component                               | Purpose                                     |
+| --------------------------------------- | ------------------------------------------- |
+| `main.py`                               | Main application entry point                |
+| `train.py`                              | Training entry point                        |
+| `predict.py`                            | Prediction entry point                      |
+| `evaluate.py`                           | Evaluation entry point                      |
+| `src/bfs.py`                            | BFS traversal and shortest-path operations  |
+| `src/graph_generator.py`                | Graph generation utilities                  |
+| `src/feature_engineering.py`            | Graph feature extraction                    |
+| `src/dataset_generator.py`              | ML dataset generation                       |
+| `src/model.py`                          | Random Forest training and model evaluation |
+| `src/predictor.py`                      | ML-based path prediction                    |
+| `src/visualize.py`                      | Graph and path visualization                |
+| `data/training_data.csv`                | Training dataset                            |
+| `models/bfs_shortest_path_model.joblib` | Saved trained model                         |
 
 ---
 
-# Machine Learning Pipeline
+# Complete Workflow
 
 ```text
-Graph Generation
-       │
-       ▼
-BFS Ground Truth
-       │
-       ▼
-Feature Extraction
-       │
-       ▼
-Training Dataset
-       │
-       ▼
-Train/Test Split
-       │
-       ▼
-Random Forest
-       │
-       ▼
-Model Evaluation
-       │
-       ▼
-Save Model
-       │
-       ▼
-User Graph
-       │
-       ▼
-ML Path Prediction
-       │
-       ▼
-BFS Comparison
+                 ┌───────────────────┐
+                 │  Graph Generator  │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │       BFS         │
+                 │  Ground Truth     │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │ Feature           │
+                 │ Engineering       │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │ Training Dataset  │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │ Random Forest     │
+                 │ Training          │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │ Trained Model     │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │ User Graph Input   │
+                 └─────────┬─────────┘
+                           │
+                 ┌─────────┴─────────┐
+                 ▼                   ▼
+          ┌─────────────┐      ┌─────────────┐
+          │     BFS     │      │ ML Predictor│
+          └──────┬──────┘      └──────┬──────┘
+                 │                    │
+                 ▼                    ▼
+          BFS Shortest Path     ML Predicted Path
+                 │                    │
+                 └─────────┬──────────┘
+                           ▼
+                  ┌─────────────────┐
+                  │   Evaluation    │
+                  └────────┬────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │ Visualization   │
+                  └─────────────────┘
 ```
 
 ---
 
-# Technologies
+# Testing
 
-| Technology    | Purpose               |
-| ------------- | --------------------- |
-| Python        | Core implementation   |
-| Pandas        | Dataset processing    |
-| scikit-learn  | Machine learning      |
-| Random Forest | Classification model  |
-| Joblib        | Model persistence     |
-| Matplotlib    | Visualization         |
-| PowerShell    | Interactive execution |
-| Git           | Version control       |
-| GitHub        | Repository hosting    |
+PathMind can be tested at several levels.
+
+### BFS Testing
+
+```powershell
+python .\src\bfs.py
+```
+
+### Feature Engineering Testing
+
+```powershell
+python .\src\feature_engineering.py
+```
+
+### Dataset Generation
+
+```powershell
+python -m src.dataset_generator
+```
+
+### Model Training
+
+```powershell
+python train.py
+```
+
+### Prediction
+
+```powershell
+python predict.py
+```
+
+### Evaluation
+
+```powershell
+python evaluate.py
+```
 
 ---
 
 # Limitations
 
-The current version is a research/educational prototype.
+PathMind is currently an **ML-assisted graph path prediction prototype**.
 
-* The model is trained using BFS-derived data.
-* ML predictions are not guaranteed to be optimal.
-* BFS remains the ground-truth reference for unweighted graphs.
-* Classification accuracy does not directly represent path-level accuracy.
-* The current implementation focuses on unweighted graphs.
-* Performance may vary on previously unseen graph structures.
+* BFS provides the shortest-path reference for unweighted graphs.
+* ML predictions are not guaranteed to produce an optimal path.
+* Classification accuracy does not directly represent complete path accuracy.
+* The current approach is based on BFS-derived training data.
+* Performance can vary across unseen graph structures.
 * Larger and more diverse datasets may improve generalization.
-* The current model does not replace traditional shortest-path algorithms.
+* The current implementation focuses primarily on unweighted graph navigation.
+* Traditional graph algorithms remain important when guaranteed optimality is required.
 
 ---
 
@@ -535,69 +738,83 @@ The current version is a research/educational prototype.
 
 Possible future improvements include:
 
-* 📊 Large-scale graph dataset generation
-* 🎯 Automated path-level accuracy testing
-* 🧪 Evaluation across hundreds or thousands of unseen graphs
+* 📊 Larger and more diverse graph datasets
+* 🎯 Automated path-level accuracy benchmarking
+* 🧪 Evaluation across thousands of unseen graphs
 * ⚖️ Weighted graph support
 * ➡️ Directed graph support
-* 🧭 Dijkstra-based path prediction
+* 🚀 Dijkstra-based path prediction
 * ⭐ A* path prediction
-* 🧠 Graph Neural Networks (GNNs)
+* 🧠 Graph Neural Network implementation
 * 🔬 Hyperparameter optimization
 * 🔄 Cross-validation
-* 📈 Advanced model comparison
-* 🖥 Graphical user interface
-* 🌐 Web-based visualization
-* 📊 Real-time graph visualization
-* 🔍 Explainable AI for node selection
-* ⚡ Performance benchmarking against BFS, Dijkstra, and A*
+* 📈 Model comparison
+* 🖥 Interactive graphical interface
+* 🌐 Web-based graph visualization
+* ⚡ Performance benchmarking
+* 🔍 Explainable AI for path decisions
+* 📊 Real-time ML vs algorithm comparison
 
 ---
 
-# Testing Strategy
+# Technologies
 
-PathMind can be tested at multiple levels:
+| Technology    | Purpose                   |
+| ------------- | ------------------------- |
+| Python        | Core programming language |
+| Pandas        | Dataset processing        |
+| scikit-learn  | Machine learning          |
+| Random Forest | Classification            |
+| Joblib        | Model serialization       |
+| Matplotlib    | Graph visualization       |
+| PowerShell    | Command-line interaction  |
+| Git           | Version control           |
+| GitHub        | Repository hosting        |
 
-### Unit Testing
+---
 
-Test individual components:
+# Dependencies
+
+Runtime:
 
 ```text
-BFS
+pandas
+scikit-learn
+joblib
+matplotlib
+```
+
+Install all dependencies using:
+
+```powershell
+pip install -r requirements.txt
+```
+
+---
+
+# Why PathMind?
+
+Traditional BFS can reliably find the shortest path in an unweighted graph.
+
+PathMind explores a different question:
+
+> **Can machine learning learn graph-based path-selection patterns from algorithmically generated data?**
+
+BFS acts as the reference mechanism for generating path information, while the machine-learning model learns from engineered graph features and attempts to make intelligent candidate-node decisions.
+
+This makes PathMind an experimental intersection of:
+
+```text
+Graph Algorithms
+       +
 Feature Engineering
-Graph Generation
-Path Validation
+       +
+Supervised Machine Learning
+       +
+Path Prediction
+       +
+Algorithmic Evaluation
 ```
-
-### Model Testing
-
-Evaluate:
-
-```text
-Accuracy
-Precision
-Recall
-F1-score
-Confusion Matrix
-```
-
-### Path-Level Testing
-
-Compare:
-
-```text
-ML predicted path
-        vs.
-BFS shortest path
-```
-
-Important path-level metrics can include:
-
-* Exact path match
-* Destination reachability
-* Path length
-* Optimal-path rate
-* Average path-length difference
 
 ---
 
@@ -617,7 +834,7 @@ Contributions are welcome.
 2. Create a feature branch
 3. Make your changes
 4. Add or update tests
-5. Verify the project
+5. Run the project and verify your changes
 6. Commit your changes
 7. Push the branch
 8. Open a Pull Request
@@ -635,6 +852,7 @@ git checkout -b feature/new-improvement
 * **scikit-learn** for machine-learning algorithms
 * **Pandas** for data processing
 * **Joblib** for model persistence
+* **Matplotlib** for visualization
 * **Python** for the core implementation
 
 ---
@@ -647,8 +865,8 @@ GitHub: https://github.com/Sanin1024
 
 ---
 
-# Project Repository
+# Repository
 
-GitHub:
+**PathMind**
 
 https://github.com/Sanin1024/PathMind
